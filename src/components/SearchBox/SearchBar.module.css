@@ -1,0 +1,9 @@
+.container {
+  margin-bottom: 10px;
+}
+
+.search {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px;
+}
