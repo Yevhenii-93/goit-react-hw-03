@@ -1,18 +1,19 @@
-import { Field, Form, Formik } from "formik";
+import { Field, Form, Formik, ErrorMessage } from "formik";
 import { nanoid } from "nanoid";
 import { useId } from "react";
 import * as Yup from "yup";
+import css from "./ContactForm.module.css";
 
 export default function ContactForm({ addContact }) {
   const nameId = useId();
   const numberId = useId();
   const handleAddContact = (values, actions) => {
-    const { userName, userNumber } = values;
+    const { name, number } = values;
 
     const addNewContact = {
       id: nanoid(),
-      name: userName,
-      number: userNumber,
+      name: name,
+      number: number,
     };
 
     addContact(addNewContact);
@@ -20,26 +21,44 @@ export default function ContactForm({ addContact }) {
     actions.resetForm();
   };
 
-  const ContactShema = Yup.object().shape({
-    userName: Yup.string().min(2, "Too Short!").max(50, "Too Long!"),
-    userNumber: Yup.number()
-      .min(9, "Error in the number")
-      .max(9, "Error in the number")
+  const ContactSchema = Yup.object().shape({
+    name: Yup.string()
+      .min(3, "Too Short!")
+      .max(50, "Too Long!")
+      .required("Name is the required!"),
+    number: Yup.string()
+      .min(3, "Error in the number")
+      .max(50, "Error in the number")
       .required("Number is required!"),
   });
 
   return (
     <Formik
-      initialValues={{ userName: "", userNumber: "" }}
+      initialValues={{ name: "", number: "" }}
       onSubmit={handleAddContact}
-      validationSchema={ContactShema}
+      validationSchema={ContactSchema}
     >
-      <Form>
-        <label htmlFor={nameId}>Name</label>
-        <Field type="text" name="userName" id={nameId} />
+      <Form className={css.form}>
+        <div className={css.container}>
+          <label htmlFor={nameId} className={css.label}>
+            Name
+          </label>
+          <Field className={css.input} type="text" name="name" id={nameId} />
+          <ErrorMessage component="span" name="name" />
+        </div>
 
-        <label htmlFor={numberId}>Number</label>
-        <Field type="number" name="userNumber" id={numberId} />
+        <div className={css.container}>
+          <label htmlFor={numberId} className={css.label}>
+            Number
+          </label>
+          <Field
+            className={css.input}
+            type="text"
+            name="number"
+            id={numberId}
+          />
+          <ErrorMessage component="span" name="number" />
+        </div>
 
         <button type="submit">Add contact</button>
       </Form>
